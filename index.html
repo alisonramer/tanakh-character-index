@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tanakh character index</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Marcellus&family=PT+Serif:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #E5E3DC;
+    --paper-card: #FAF9F6;
+    --ink: #303636;
+    --ink-soft: #5C6363;
+    --blue: #4A90D9;
+    --blue-bg: #DCEAF7;
+    --tan: #D3A16C;
+    --tan-bg: #F3E4D2;
+    --blue-dark: #2E6199;
+    --blue-dark-bg: #DCE6EE;
+    --tan-dark: #A97C45;
+    --tan-dark-bg: #EFE0CC;
+    --wisdom: #6F8088;
+    --wisdom-bg: #E4E9EA;
+    --rust: #B0604A;
+    --rust-bg: #F0DDD6;
+    --rule: #D3D0C6;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'PT Serif', serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wrap {
+    max-width: 920px;
+    margin: 0 auto;
+    padding: 48px 24px 80px;
+  }
+
+  header {
+    border-bottom: 1px solid var(--rule);
+    padding-bottom: 28px;
+    margin-bottom: 28px;
+  }
+
+  .eyebrow {
+    font-size: 12px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--blue);
+    font-weight: 600;
+    margin-bottom: 10px;
+  }
+
+  h1 {
+    font-family: 'Marcellus', serif;
+    font-weight: 500;
+    font-size: 38px;
+    margin: 0 0 8px;
+    line-height: 1.15;
+  }
+
+  .sub {
+    color: var(--ink-soft);
+    font-size: 15px;
+    max-width: 580px;
+    line-height: 1.6;
+    margin: 0;
+  }
+
+  .view-toggle {
+    display: flex;
+    gap: 6px;
+    margin-top: 20px;
+  }
+
+  .view-btn {
+    font-family: 'Marcellus', serif;
+    font-size: 14px;
+    padding: 8px 18px;
+    border-radius: 6px;
+    border: 1px solid var(--rule);
+    background: var(--paper-card);
+    color: var(--ink-soft);
+    cursor: pointer;
+  }
+
+  .view-btn.active {
+    background: var(--ink);
+    color: var(--paper-card);
+    border-color: var(--ink);
+  }
+
+  .controls {
+    position: sticky;
+    top: 0;
+    background: var(--paper);
+    padding: 18px 0 16px;
+    z-index: 5;
+    border-bottom: 1px solid var(--rule);
+    margin-bottom: 22px;
+  }
+
+  .search-row {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+
+  .search-box {
+    flex: 1;
+    position: relative;
+  }
+
+  .search-box input {
+    width: 100%;
+    padding: 10px 14px 10px 36px;
+    border: 1px solid var(--rule);
+    border-radius: 6px;
+    background: var(--paper-card);
+    font-family: 'PT Serif', serif;
+    font-size: 14px;
+    color: var(--ink);
+  }
+
+  .search-box input:focus {
+    outline: 2px solid var(--blue);
+    outline-offset: 1px;
+  }
+
+  .search-box svg {
+    position: absolute;
+    left: 11px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 15px;
+    height: 15px;
+    color: var(--ink-soft);
+  }
+
+  .count-badge {
+    font-size: 13px;
+    color: var(--ink-soft);
+    align-self: center;
+    white-space: nowrap;
+    padding-left: 4px;
+  }
+
+  .tabs {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+  }
+
+  .tab {
+    font-family: 'Marcellus', serif;
+    font-size: 14px;
+    padding: 7px 16px;
+    border-radius: 999px;
+    border: 1px solid var(--rule);
+    background: transparent;
+    color: var(--ink-soft);
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+
+  .tab:hover { border-color: var(--blue); color: var(--ink); }
+
+  .tab.active {
+    background: var(--ink);
+    color: var(--paper-card);
+    border-color: var(--ink);
+  }
+
+  .chips {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .chip {
+    font-size: 12.5px;
+    font-weight: 500;
+    padding: 5px 12px;
+    border-radius: 999px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--paper-card);
+    color: var(--ink-soft);
+    border: 1px solid var(--rule);
+    transition: all 0.15s ease;
+  }
+
+  .chip .dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    display: inline-block;
+  }
+
+  .chip.active { color: var(--ink); border-color: currentColor; }
+  .chip[data-cat="ancestral"].active { background: var(--tan-bg); border-color: var(--tan); }
+  .chip[data-cat="prophet"].active { background: var(--blue-bg); border-color: var(--blue); }
+  .chip[data-cat="judge"].active { background: var(--blue-dark-bg); border-color: var(--blue-dark); }
+  .chip[data-cat="king"].active { background: var(--tan-dark-bg); border-color: var(--tan-dark); }
+  .chip[data-cat="wisdom"].active { background: var(--wisdom-bg); border-color: var(--wisdom); }
+  .chip[data-cat="antagonist"].active { background: var(--rust-bg); border-color: var(--rust); }
+
+  .family-chips { margin-top: 8px; }
+
+  .fchip {
+    font-size: 12.5px;
+    font-weight: 500;
+    padding: 5px 12px;
+    border-radius: 999px;
+    cursor: pointer;
+    background: var(--paper-card);
+    color: var(--ink-soft);
+    border: 1px dashed var(--rule);
+    transition: all 0.15s ease;
+  }
+
+  .fchip:hover { border-color: var(--tan); color: var(--ink); }
+
+  .fchip.active {
+    background: var(--tan-bg);
+    border: 1px solid var(--tan);
+    color: var(--tan);
+  }
+
+  .lineage-chips { margin-top: 8px; }
+
+  .lchip {
+    font-size: 12.5px;
+    font-weight: 500;
+    padding: 5px 12px;
+    border-radius: 999px;
+    cursor: pointer;
+    background: var(--paper-card);
+    color: var(--ink-soft);
+    border: 1px dashed var(--rule);
+    transition: all 0.15s ease;
+  }
+
+  .lchip:hover { border-color: var(--blue); color: var(--ink); }
+
+  .lchip.active {
+    background: var(--blue-bg);
+    border: 1px solid var(--blue);
+    color: var(--blue);
+  }
+
+  .lineage-line {
+    font-size: 12px;
+    line-height: 1.5;
+    color: var(--blue);
+    font-style: italic;
+    margin-bottom: 8px;
+  }
+
+  .dot.ancestral { background: var(--tan); }
+  .dot.prophet { background: var(--blue); }
+  .dot.judge { background: var(--blue-dark); }
+  .dot.king { background: var(--tan-dark); }
+  .dot.wisdom { background: var(--wisdom); }
+  .dot.antagonist { background: var(--rust); }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 14px;
+  }
+
+  .card {
+    background: var(--paper-card);
+    border: 1px solid var(--rule);
+    border-radius: 10px;
+    padding: 16px 18px;
+    cursor: pointer;
+    transition: border-color 0.15s ease;
+  }
+
+  .card:hover { border-color: var(--ink-soft); }
+
+  .card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 8px;
+    margin-bottom: 6px;
+  }
+
+  .card h3 {
+    font-family: 'Marcellus', serif;
+    font-weight: 500;
+    font-size: 17px;
+    margin: 0;
+    line-height: 1.3;
+  }
+
+  .tag {
+    font-size: 10.5px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    padding: 3px 8px;
+    border-radius: 999px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .tag.ancestral { background: var(--tan-bg); color: var(--tan); }
+  .tag.prophet { background: var(--blue-bg); color: var(--blue); }
+  .tag.judge { background: var(--blue-dark-bg); color: var(--blue-dark); }
+  .tag.king { background: var(--tan-dark-bg); color: var(--tan-dark); }
+  .tag.wisdom { background: var(--wisdom-bg); color: var(--wisdom); }
+  .tag.antagonist { background: var(--rust-bg); color: var(--rust); }
+
+  .book {
+    font-size: 12px;
+    color: var(--ink-soft);
+    font-style: italic;
+    margin-bottom: 4px;
+  }
+
+  .tribe-line {
+    font-size: 11.5px;
+    color: var(--blue);
+    font-weight: 500;
+    margin-bottom: 8px;
+  }
+
+  .blurb {
+    font-size: 13.5px;
+    line-height: 1.55;
+    color: var(--ink);
+    margin: 0;
+  }
+
+  .empty {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--ink-soft);
+    font-size: 14px;
+  }
+
+  .empty .big {
+    font-family: 'Marcellus', serif;
+    font-size: 20px;
+    color: var(--ink);
+    display: block;
+    margin-bottom: 6px;
+  }
+
+  .timeline-note {
+    font-size: 13.5px;
+    line-height: 1.6;
+    color: var(--ink-soft);
+    background: var(--paper-card);
+    border: 1px solid var(--rule);
+    border-radius: 8px;
+    padding: 14px 16px;
+    margin-bottom: 24px;
+  }
+
+  .timeline-note strong { color: var(--ink); font-weight: 600; }
+
+  .era-block {
+    position: relative;
+    padding-left: 22px;
+    margin-bottom: 30px;
+    border-left: 2px solid var(--rule);
+  }
+
+  .era-block::before {
+    content: "";
+    position: absolute;
+    left: -6px;
+    top: 2px;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--blue);
+  }
+
+  .era-head { margin-bottom: 12px; }
+
+  .era-label {
+    font-family: 'Marcellus', serif;
+    font-size: 19px;
+    font-weight: 500;
+    margin: 0 0 2px;
+  }
+
+  .era-period {
+    font-size: 12.5px;
+    color: var(--ink-soft);
+    font-style: italic;
+  }
+
+  .era-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .tchip {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    background: var(--paper-card);
+    border: 1px solid var(--rule);
+    border-radius: 999px;
+    padding: 6px 12px 6px 8px;
+    cursor: pointer;
+    font-size: 13px;
+  }
+
+  .tchip:hover { border-color: var(--ink-soft); }
+  .tchip .dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .tchip .tname { font-weight: 500; }
+  .tchip .tbook { color: var(--ink-soft); font-size: 11.5px; }
+
+  footer {
+    margin-top: 40px;
+    padding-top: 20px;
+    border-top: 1px solid var(--rule);
+    font-size: 12px;
+    color: var(--ink-soft);
+    text-align: center;
+  }
+
+  @media (max-width: 480px) {
+    h1 { font-size: 30px; }
+    .wrap { padding: 32px 16px 60px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="eyebrow">Reference tool</div>
+    <h1>Tanakh character index</h1>
+    <p class="sub">Search and filter the recurring figures across Torah, Nevi'im, and Ketuvim &mdash; by book, section, role, tribe, family, or non-blood lineage (mentorships, priestly succession, prophetic anointing). Switch to the timeline view to see how characters relate across generations and eras.</p>
+    <div class="view-toggle">
+      <button class="view-btn active" data-view="browse">Browse</button>
+      <button class="view-btn" data-view="timeline">Timeline</button>
+    </div>
+  </header>
+
+  <div id="browseView">
+    <div class="controls">
+      <div class="search-row">
+        <div class="search-box">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="text" id="searchInput" placeholder="Search by name, book, tribe, or family&hellip;">
+        </div>
+        <div class="count-badge" id="countBadge"></div>
+      </div>
+      <div class="tabs" id="sectionTabs">
+        <button class="tab active" data-section="all">All</button>
+        <button class="tab" data-section="torah">Torah</button>
+        <button class="tab" data-section="neviim">Nevi'im</button>
+        <button class="tab" data-section="ketuvim">Ketuvim</button>
+      </div>
+      <div class="chips" id="roleChips">
+        <button class="chip" data-cat="ancestral"><span class="dot ancestral"></span>Ancestral figures</button>
+        <button class="chip" data-cat="prophet"><span class="dot prophet"></span>Prophets</button>
+        <button class="chip" data-cat="judge"><span class="dot judge"></span>Judges &amp; leaders</button>
+        <button class="chip" data-cat="king"><span class="dot king"></span>Kings &amp; queens</button>
+        <button class="chip" data-cat="wisdom"><span class="dot wisdom"></span>Wisdom &amp; exile</button>
+        <button class="chip" data-cat="antagonist"><span class="dot antagonist"></span>Antagonists &amp; foils</button>
+      </div>
+      <div class="chips family-chips" id="familyChips">
+        <button class="fchip" data-family="House of Abraham">House of Abraham</button>
+        <button class="fchip" data-family="House of Jacob">House of Jacob</button>
+        <button class="fchip" data-family="House of Moses">House of Moses</button>
+        <button class="fchip" data-family="House of Saul">House of Saul</button>
+        <button class="fchip" data-family="House of David">House of David</button>
+        <button class="fchip" data-family="House of Esther &amp; Mordecai">House of Esther &amp; Mordecai</button>
+        <button class="fchip" data-family="Aaronic priestly line">Aaronic priestly line</button>
+      </div>
+      <div class="chips lineage-chips" id="lineageChips">
+        <button class="lchip" data-lineage="Wilderness leadership succession">Wilderness succession</button>
+        <button class="lchip" data-lineage="Prophetic kingmaking line">Prophetic kingmaking</button>
+        <button class="lchip" data-lineage="Prophetic mantle succession">Prophetic mantle succession</button>
+        <button class="lchip" data-lineage="Amalek conflict echo">Amalek conflict echo</button>
+        <button class="lchip" data-lineage="Priestly succession: Ithamar to Zadok">Priestly succession (Ithamar&ndash;Zadok)</button>
+        <button class="lchip" data-lineage="Ancestral mothers of the Davidic line">Ancestral mothers of David's line</button>
+        <button class="lchip" data-lineage="Outsider women who join Israel">Outsider women who join Israel</button>
+      </div>
+    </div>
+    <div class="grid" id="grid"></div>
+  </div>
+
+  <div id="timelineView" style="display:none;">
+    <div class="timeline-note">
+      <strong>How to read this:</strong> eras follow the Tanakh's own narrative order, not a claim about historical dating. Within an era, characters are ordered as they appear in the story, so you can see who is a contemporary of whom &mdash; and threads like <strong>Judah &rarr; Boaz &rarr; David &rarr; Solomon</strong> show how a single family line runs across several eras and hundreds of narrated years.
+    </div>
+    <div id="eraList"></div>
+  </div>
+
+  <footer>Click any card or chip to send a follow-up question to Claude.</footer>
+</div>
+
+<script>
+const characters = [
+  {name:"Adam & Eve", book:"Genesis", section:"torah", cat:"ancestral", era:"ancestral", order:1, tribe:"Pre-tribal (before Israel existed)", family:"First family", lineage:"", blurb:"The first man and woman, whose story sets the pattern of paradise, transgression, and consequence."},
+  {name:"Noah", book:"Genesis", section:"torah", cat:"ancestral", era:"ancestral", order:2, tribe:"Pre-tribal (before Israel existed)", family:"House of Noah", lineage:"", blurb:"Survives the flood by building an ark, becoming the ancestor of a renewed humanity."},
+  {name:"Abraham", book:"Genesis", section:"torah", cat:"ancestral", era:"ancestral", order:3, tribe:"Pre-tribal ancestor", family:"House of Abraham", lineage:"", blurb:"The first patriarch, called to leave his homeland and father a covenant people."},
+  {name:"Sarah", book:"Genesis", section:"torah", cat:"ancestral", era:"ancestral", order:4, tribe:"Pre-tribal ancestor", family:"House of Abraham", lineage:"", blurb:"Abraham's wife, whose long-awaited son Isaac fulfills the promise of descendants."},
+  {name:"Hagar", book:"Genesis", section:"torah", cat:"ancestral", era:"ancestral", order:5, tribe:"Not Israelite (Egyptian)", family:"House of Abraham", lineage:"Outsider women who join Israel's story (with Tamar, Rahab, Ruth & Zipporah)", blurb:"Sarah's servant and mother of Ishmael, sent into the wilderness yet met by God there."},
+  {name:"Job", book:"Job", section:"ketuvim", cat:"wisdom", era:"ancestral", order:5.5, tribe:"Not Israelite (land of Uz)", family:"No named family group", lineage:"", blurb:"A righteous man whose suffering becomes the Bible's deepest meditation on justice and faith; tradition often places him in this undated, patriarchal-feeling world."},
+  {name:"Isaac", book:"Genesis", section:"torah", cat:"ancestral", era:"ancestral", order:6, tribe:"Pre-tribal ancestor", family:"House of Abraham", lineage:"", blurb:"The second patriarch, bound on the altar and later a quiet, contemplative figure."},
+  {name:"Rebecca", book:"Genesis", section:"torah", cat:"ancestral", era:"ancestral", order:7, tribe:"Pre-tribal ancestor", family:"House of Abraham", lineage:"", blurb:"Isaac's wife, who orchestrates the blessing that secures Jacob's inheritance."},
+  {name:"Jacob (Israel)", book:"Genesis", section:"torah", cat:"ancestral", era:"ancestral", order:8, tribe:"Father of all twelve tribes", family:"House of Jacob", lineage:"", blurb:"Wrestles with an angel and is renamed Israel, becoming father to the twelve tribes."},
+  {name:"Rachel", book:"Genesis", section:"torah", cat:"ancestral", era:"ancestral", order:9, tribe:"Matriarch of Joseph & Benjamin", family:"House of Jacob", lineage:"", blurb:"Jacob's beloved wife, whose long-delayed motherhood shapes the family's story."},
+  {name:"Leah", book:"Genesis", section:"torah", cat:"ancestral", era:"ancestral", order:9.2, tribe:"Matriarch of Reuben, Simeon, Levi, Judah, Issachar & Zebulun", family:"House of Jacob", lineage:"", blurb:"Jacob's first wife, mother of six tribes including Judah and Levi."},
+  {name:"Judah", book:"Genesis", section:"torah", cat:"ancestral", era:"ancestral", order:9.5, tribe:"Judah (founder)", family:"House of Jacob", lineage:"", blurb:"Jacob's fourth son, whose line later produces the House of David."},
+  {name:"Tamar", book:"Genesis", section:"torah", cat:"ancestral", era:"ancestral", order:9.6, tribe:"Not Israelite by birth (Canaanite; joins Judah's line by marriage)", family:"House of Jacob (by marriage to Judah's sons)", lineage:"Ancestral mothers of the Davidic line (with Ruth & Bathsheba); Outsider women who join Israel's story (with Hagar, Rahab, Ruth & Zipporah)", blurb:"Judah's daughter-in-law, who secures her place in his line through a bold act of justice, becoming an ancestress of David."},
+  {name:"Joseph", book:"Genesis", section:"torah", cat:"ancestral", era:"ancestral", order:10, tribe:"Joseph (founder; later split into Ephraim & Manasseh)", family:"House of Jacob", lineage:"", blurb:"Sold into slavery by his brothers, he rises to power in Egypt and later forgives them."},
+  {name:"Moses", book:"Exodus\u2013Deuteronomy", section:"torah", cat:"prophet", era:"exodus", order:1, tribe:"Levi", family:"House of Moses", lineage:"Wilderness leadership succession (mentor to Joshua)", blurb:"Leads the Israelites out of Egypt and receives the Torah at Sinai."},
+  {name:"Zipporah", book:"Exodus", section:"torah", cat:"ancestral", era:"exodus", order:1.2, tribe:"Not Israelite (Midianite)", family:"House of Moses (by marriage)", lineage:"Outsider women who join Israel's story (with Hagar, Tamar, Rahab & Ruth); at the center of the conflict over Moses's foreign marriage in Numbers 12", blurb:"A Midianite priest's daughter who marries Moses during his exile, and whose foreignness later becomes the flashpoint for Miriam and Aaron's complaint against him."},
+  {name:"Aaron", book:"Exodus\u2013Numbers", section:"torah", cat:"ancestral", era:"exodus", order:2, tribe:"Levi", family:"House of Moses; Aaronic priestly line (origin)", lineage:"", blurb:"Moses's brother and the first high priest."},
+  {name:"Miriam", book:"Exodus\u2013Numbers", section:"torah", cat:"prophet", era:"exodus", order:3, tribe:"Levi", family:"House of Moses", lineage:"Confronts Moses over his marriage to a foreign wife (Numbers 12), intersecting with Zipporah's story", blurb:"Moses and Aaron's sister, a prophetess who leads the women in song at the sea."},
+  {name:"Pharaoh", book:"Exodus", section:"torah", cat:"antagonist", era:"exodus", order:4, tribe:"Not Israelite (Egyptian)", family:"No named family group", lineage:"", blurb:"The unnamed ruler whose refusal to free the Israelites brings on the plagues."},
+  {name:"Korah", book:"Numbers", section:"torah", cat:"antagonist", era:"exodus", order:5, tribe:"Levi", family:"House of Moses (rival Kohathite branch)", lineage:"", blurb:"Leads a rebellion against Moses's leadership and is swallowed by the earth."},
+  {name:"Balaam", book:"Numbers", section:"torah", cat:"ancestral", era:"exodus", order:6, tribe:"Not Israelite (Aramean)", family:"No named family group", lineage:"", blurb:"A hired prophet whose donkey sees more than he does, and who ultimately blesses Israel."},
+  {name:"Caleb", book:"Numbers", section:"torah", cat:"judge", era:"exodus", order:7, tribe:"Judah", family:"No named family group", lineage:"Wilderness leadership succession (Joshua's contemporary)", blurb:"One of the twelve scouts, whose faith earns him entry into the promised land."},
+  {name:"Rahab", book:"Joshua", section:"neviim", cat:"wisdom", era:"settlement", order:0.5, tribe:"Not Israelite (Canaanite, Jericho)", family:"No named family group (Jewish tradition holds she later married into Israel)", lineage:"Outsider women who join Israel's story (with Hagar, Tamar, Ruth & Zipporah); Jewish tradition (Talmud) holds she married Joshua", blurb:"A Canaanite innkeeper in Jericho who hides Israelite spies and is spared when the city falls, becoming a lasting example of faith recognized from outside Israel."},
+  {name:"Joshua", book:"Joshua", section:"neviim", cat:"judge", era:"settlement", order:1, tribe:"Ephraim", family:"No named family group", lineage:"Wilderness leadership succession (successor to Moses)", blurb:"Moses's successor, who leads the conquest and settlement of the land."},
+  {name:"Deborah", book:"Judges", section:"neviim", cat:"prophet", era:"settlement", order:2, tribe:"Ephraim (traditionally)", family:"No named family group", lineage:"", blurb:"A judge and prophetess who leads Israel to victory and sings a triumphant song."},
+  {name:"Gideon", book:"Judges", section:"neviim", cat:"judge", era:"settlement", order:3, tribe:"Manasseh", family:"No named family group", lineage:"", blurb:"A reluctant judge who defeats the Midianites with a small, chosen force."},
+  {name:"Samson", book:"Judges", section:"neviim", cat:"judge", era:"settlement", order:4, tribe:"Dan", family:"No named family group", lineage:"", blurb:"A judge of immense strength undone by his entanglement with Delilah."},
+  {name:"Delilah", book:"Judges", section:"neviim", cat:"antagonist", era:"settlement", order:4.5, tribe:"Not Israelite (Philistine)", family:"No named family group", lineage:"", blurb:"Discovers the secret of Samson's strength and hands him to his enemies."},
+  {name:"Naomi", book:"Ruth", section:"ketuvim", cat:"wisdom", era:"settlement", order:5, tribe:"Judah", family:"House of David (ancestors)", lineage:"", blurb:"Ruth's mother-in-law, whose grief and return home set the story in motion."},
+  {name:"Ruth", book:"Ruth", section:"ketuvim", cat:"wisdom", era:"settlement", order:5.2, tribe:"Not Israelite by birth (Moabite; joins Judah by marriage)", family:"House of David (ancestors)", lineage:"Ancestral mothers of the Davidic line (with Tamar & Bathsheba); Moabite ancestry traces back to Lot, Abraham's nephew (Genesis 19); Outsider women who join Israel's story (with Hagar, Tamar, Rahab & Zipporah)", blurb:"A Moabite widow whose loyalty to Naomi makes her the great-grandmother of David."},
+  {name:"Boaz", book:"Ruth", section:"ketuvim", cat:"wisdom", era:"settlement", order:5.4, tribe:"Judah", family:"House of David (ancestors)", lineage:"", blurb:"A kinsman-redeemer whose kindness to Ruth secures her place in the family line that leads to David."},
+  {name:"Eli", book:"1 Samuel", section:"neviim", cat:"judge", era:"settlement", order:6, tribe:"Levi", family:"Aaronic priestly line (Ithamar branch, origin point)", lineage:"Priestly succession: Ithamar to Zadok (predecessor line, later displaced); mentored young Samuel at Shiloh", blurb:"The priest and judge at Shiloh who raises Samuel, and whose own sons' corruption costs his family the high priesthood."},
+  {name:"Samuel", book:"1 Samuel", section:"neviim", cat:"prophet", era:"united", order:1, tribe:"Levi (raised in Ephraimite territory)", family:"No named family group", lineage:"Prophetic kingmaking line (anointed Saul and David); mentored by Eli at Shiloh in his youth", blurb:"The last judge and a prophet who anoints Israel's first two kings."},
+  {name:"Saul", book:"1 Samuel", section:"neviim", cat:"king", era:"united", order:2, tribe:"Benjamin", family:"House of Saul", lineage:"Prophetic kingmaking line (anointed by Samuel); Amalek conflict echo (Agag/Haman, per tradition)", blurb:"Israel's first king, whose promising start unravels into jealousy and downfall."},
+  {name:"David", book:"1\u20132 Samuel", section:"neviim", cat:"king", era:"united", order:3, tribe:"Judah", family:"House of David", lineage:"Prophetic kingmaking line (anointed by Samuel)", blurb:"The shepherd-poet who becomes Israel's greatest king and founds a lasting dynasty; great-grandson of Ruth and Boaz."},
+  {name:"Bathsheba", book:"2 Samuel", section:"neviim", cat:"king", era:"united", order:4, tribe:"Judah (by marriage)", family:"House of David", lineage:"Ancestral mothers of the Davidic line (with Tamar & Ruth)", blurb:"David's wife, whose story exposes his gravest moral failure, and mother of Solomon."},
+  {name:"Nathan", book:"2 Samuel", section:"neviim", cat:"prophet", era:"united", order:4.5, tribe:"Unspecified", family:"No named family group", lineage:"Royal court prophetic counselor (to David and Solomon)", blurb:"The prophet who confronts David with a parable and forces him to reckon with his sin."},
+  {name:"Solomon", book:"1 Kings", section:"neviim", cat:"king", era:"united", order:5, tribe:"Judah", family:"House of David", lineage:"", blurb:"David's son, renowned for wisdom, who builds the Temple and later strays."},
+  {name:"Elijah", book:"1\u20132 Kings", section:"neviim", cat:"prophet", era:"divided", order:1, tribe:"Gilead (Gad or Manasseh, uncertain)", family:"No named family group", lineage:"Prophetic mantle succession (mentor to Elisha)", blurb:"A fiery prophet who confronts idolatry and ascends to heaven in a whirlwind."},
+  {name:"Elisha", book:"2 Kings", section:"neviim", cat:"prophet", era:"divided", order:2, tribe:"Issachar", family:"No named family group", lineage:"Prophetic mantle succession (received Elijah's mantle)", blurb:"Elijah's successor, known for a string of miracles among the ordinary and the powerful alike."},
+  {name:"Jezebel", book:"1\u20132 Kings", section:"neviim", cat:"antagonist", era:"divided", order:2.5, tribe:"Not Israelite (Phoenician)", family:"House of Omri (by marriage to Ahab)", lineage:"", blurb:"A foreign queen who promotes idol worship and becomes a byword for corruption."},
+  {name:"Jonah", book:"Jonah", section:"neviim", cat:"prophet", era:"divided", order:3, tribe:"Zebulun", family:"No named family group", lineage:"", blurb:"A reluctant prophet swallowed by a great fish before finally warning Nineveh."},
+  {name:"Amos", book:"Amos", section:"neviim", cat:"prophet", era:"divided", order:4, tribe:"Judah", family:"No named family group", lineage:"", blurb:"A shepherd-prophet who thunders against social injustice and empty ritual."},
+  {name:"Hosea", book:"Hosea", section:"neviim", cat:"prophet", era:"divided", order:5, tribe:"Unspecified (northern kingdom)", family:"No named family group", lineage:"", blurb:"A prophet whose troubled marriage becomes a living metaphor for Israel's unfaithfulness."},
+  {name:"Isaiah", book:"Isaiah", section:"neviim", cat:"prophet", era:"divided", order:6, tribe:"Judah", family:"No named family group", lineage:"", blurb:"A prophet of judgment and consolation whose visions shape messianic hope."},
+  {name:"Jeremiah", book:"Jeremiah", section:"neviim", cat:"prophet", era:"divided", order:7, tribe:"Benjamin", family:"Aaronic priestly line (Ithamar–Abiathar branch, per tradition)", lineage:"Priestly succession: Ithamar to Zadok (Ithamar branch, exiled to Anathoth per 1 Kings 2:26–27, per tradition)", blurb:"The \u201cweeping prophet,\u201d who warns of Jerusalem's fall and mourns its destruction."},
+  {name:"Ezekiel", book:"Ezekiel", section:"neviim", cat:"prophet", era:"exile", order:1, tribe:"Levi", family:"Aaronic priestly line (Zadokite branch, per tradition)", lineage:"Priestly succession: Ithamar to Zadok (Zadokite branch, per tradition)", blurb:"A prophet among the exiles whose visions include the valley of dry bones."},
+  {name:"Daniel", book:"Daniel", section:"ketuvim", cat:"wisdom", era:"exile", order:1.5, tribe:"Judah (royal line, per tradition)", family:"No named family group", lineage:"", blurb:"An exile in Babylon whose faithfulness and visions carry him through lions and kings alike."},
+  {name:"Esther", book:"Esther", section:"ketuvim", cat:"king", era:"exile", order:2, tribe:"Benjamin", family:"House of Esther & Mordecai", lineage:"", blurb:"A Jewish queen of Persia whose courage saves her people from annihilation."},
+  {name:"Mordecai", book:"Esther", section:"ketuvim", cat:"wisdom", era:"exile", order:2.1, tribe:"Benjamin", family:"House of Esther & Mordecai", lineage:"", blurb:"Esther's cousin and guardian, who uncovers a plot and urges her to act."},
+  {name:"Haman", book:"Esther", section:"ketuvim", cat:"antagonist", era:"exile", order:2.2, tribe:"Not Israelite (Agagite)", family:"House of Agag (Amalekite line, per tradition)", lineage:"Amalek conflict echo (traditionally descended from Agag, defeated by Saul)", blurb:"The vizier whose plan to destroy the Jews of Persia rebounds on himself."},
+  {name:"Ezra", book:"Ezra", section:"ketuvim", cat:"wisdom", era:"exile", order:3, tribe:"Levi", family:"Aaronic priestly line (Zadokite branch)", lineage:"Priestly succession: Ithamar to Zadok (Zadokite branch, ascendant)", blurb:"A priest-scribe who leads the return from exile and reinstitutes the Torah."},
+  {name:"Nehemiah", book:"Nehemiah", section:"ketuvim", cat:"wisdom", era:"exile", order:4, tribe:"Unspecified (likely Judah)", family:"No named family group", lineage:"", blurb:"A cupbearer turned governor who rebuilds Jerusalem's walls against fierce opposition."}
+];
+
+const catLabels = {
+  ancestral: "Ancestral figure",
+  prophet: "Prophet",
+  judge: "Judge / leader",
+  king: "King / queen",
+  wisdom: "Wisdom / exile",
+  antagonist: "Antagonist"
+};
+
+const sectionLabels = { torah: "Torah", neviim: "Nevi'im", ketuvim: "Ketuvim" };
+
+const eras = [
+  { id: "ancestral", label: "Ancestral era", period: "Genesis \u2014 from creation to the family in Egypt" },
+  { id: "exodus", label: "Exodus & wilderness", period: "Egypt to the edge of the promised land" },
+  { id: "settlement", label: "Settlement & judges", period: "Conquest through the era of the judges" },
+  { id: "united", label: "United monarchy", period: "Samuel, Saul, David, and Solomon" },
+  { id: "divided", label: "Divided monarchy", period: "Israel and Judah as separate kingdoms" },
+  { id: "exile", label: "Exile & return", period: "Babylon, Persia, and the rebuilding of Jerusalem" }
+];
+
+let state = { section: "all", cats: new Set(), families: new Set(), lineages: new Set(), query: "" };
+let currentView = "browse";
+
+function matches(c) {
+  if (state.section !== "all" && c.section !== state.section) return false;
+  if (state.cats.size > 0 && !state.cats.has(c.cat)) return false;
+  if (state.families.size > 0) {
+    let inSelected = false;
+    state.families.forEach(f => { if (c.family.includes(f)) inSelected = true; });
+    if (!inSelected) return false;
+  }
+  if (state.lineages.size > 0) {
+    let inSelected = false;
+    state.lineages.forEach(l => { if (c.lineage.includes(l)) inSelected = true; });
+    if (!inSelected) return false;
+  }
+  if (state.query) {
+    const q = state.query.toLowerCase();
+    const hay = (c.name + " " + c.book + " " + c.blurb + " " + c.tribe + " " + c.family + " " + c.lineage).toLowerCase();
+    if (!hay.includes(q)) return false;
+  }
+  return true;
+}
+
+function renderBrowse() {
+  const grid = document.getElementById("grid");
+  const filtered = characters.filter(matches);
+  document.getElementById("countBadge").textContent = filtered.length + (filtered.length === 1 ? " character" : " characters");
+
+  if (filtered.length === 0) {
+    grid.innerHTML = '<div class="empty"><span class="big">No matches</span>Try a different search term or clear a filter.</div>';
+    return;
+  }
+
+  grid.innerHTML = filtered.map(c => `
+    <div class="card" onclick="sendPrompt('Tell me more about ${c.name.replace(/'/g, "\\'")} in the Tanakh')">
+      <div class="card-top">
+        <h3>${c.name}</h3>
+        <span class="tag ${c.cat}">${catLabels[c.cat]}</span>
+      </div>
+      <div class="book">${c.book} &middot; ${sectionLabels[c.section] || "Torah"}</div>
+      <div class="tribe-line">${c.tribe}${c.family !== "No named family group" ? " &middot; " + c.family : ""}</div>
+      ${c.lineage ? `<div class="lineage-line">${c.lineage}</div>` : ""}
+      <p class="blurb">${c.blurb}</p>
+    </div>
+  `).join("");
+}
+
+function renderTimeline() {
+  const eraList = document.getElementById("eraList");
+  eraList.innerHTML = eras.map(era => {
+    const chars = characters.filter(c => c.era === era.id).sort((a, b) => a.order - b.order);
+    const chips = chars.map(c => `
+      <div class="tchip" onclick="sendPrompt('Tell me more about ${c.name.replace(/'/g, "\\'")} in the Tanakh')">
+        <span class="dot ${c.cat}"></span>
+        <span class="tname">${c.name}</span>
+        <span class="tbook">${c.book} &middot; ${c.tribe}${c.family !== "No named family group" ? " &middot; " + c.family : ""}</span>
+      </div>
+    `).join("");
+    return `
+      <div class="era-block">
+        <div class="era-head">
+          <p class="era-label">${era.label}</p>
+          <p class="era-period">${era.period}</p>
+        </div>
+        <div class="era-row">${chips}</div>
+      </div>
+    `;
+  }).join("");
+}
+
+document.getElementById("sectionTabs").addEventListener("click", (e) => {
+  const btn = e.target.closest(".tab");
+  if (!btn) return;
+  document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
+  btn.classList.add("active");
+  state.section = btn.dataset.section;
+  renderBrowse();
+});
+
+document.getElementById("roleChips").addEventListener("click", (e) => {
+  const btn = e.target.closest(".chip");
+  if (!btn) return;
+  const cat = btn.dataset.cat;
+  if (state.cats.has(cat)) {
+    state.cats.delete(cat);
+    btn.classList.remove("active");
+  } else {
+    state.cats.add(cat);
+    btn.classList.add("active");
+  }
+  renderBrowse();
+});
+
+document.getElementById("familyChips").addEventListener("click", (e) => {
+  const btn = e.target.closest(".fchip");
+  if (!btn) return;
+  const family = btn.dataset.family;
+  if (state.families.has(family)) {
+    state.families.delete(family);
+    btn.classList.remove("active");
+  } else {
+    state.families.add(family);
+    btn.classList.add("active");
+  }
+  renderBrowse();
+});
+
+document.getElementById("lineageChips").addEventListener("click", (e) => {
+  const btn = e.target.closest(".lchip");
+  if (!btn) return;
+  const lineage = btn.dataset.lineage;
+  if (state.lineages.has(lineage)) {
+    state.lineages.delete(lineage);
+    btn.classList.remove("active");
+  } else {
+    state.lineages.add(lineage);
+    btn.classList.add("active");
+  }
+  renderBrowse();
+});
+
+document.getElementById("searchInput").addEventListener("input", (e) => {
+  state.query = e.target.value.trim();
+  renderBrowse();
+});
+
+document.querySelectorAll(".view-btn").forEach(btn => {
+  btn.addEventListener("click", () => {
+    document.querySelectorAll(".view-btn").forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+    currentView = btn.dataset.view;
+    document.getElementById("browseView").style.display = currentView === "browse" ? "block" : "none";
+    document.getElementById("timelineView").style.display = currentView === "timeline" ? "block" : "none";
+  });
+});
+
+function sendPrompt(text) {
+  window.parent.postMessage({ type: "claude-artifact-send-prompt", prompt: text }, "*");
+}
+
+renderBrowse();
+renderTimeline();
+</script>
+</body>
+</html>
